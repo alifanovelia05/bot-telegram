@@ -3,44 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Otomasi Aset</title>
-    
+    <title>Asisten Microstock</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: sans-serif; padding: 20px; text-align: center; }
-        button { padding: 15px 25px; margin: 10px; cursor: pointer; }
+        body { font-family: sans-serif; padding: 20px; background-color: var(--tg-theme-bg-color); color: var(--tg-theme-text-color); }
+        .rule-btn { background: var(--tg-theme-button-color); color: var(--tg-theme-button-text-color); border: none; padding: 12px; width: 100%; border-radius: 10px; margin-bottom: 10px; cursor: pointer; text-align: left; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; }
+        .modal-content { 
+            background: var(--tg-theme-bg-color); 
+            margin: 20% auto; 
+            padding: 20px; 
+            width: 85%; 
+            border-radius: 15px; 
+            white-space: pre-line; 
+            max-height: 70vh;      
+            overflow-y: auto;      
+        }
+        .submit-btn { background: var(--tg-theme-button-color); color: var(--tg-theme-button-text-color); border: none; padding: 15px; width: 100%; margin-top: 10px; border-radius: 8px; font-weight: bold; }
     </style>
 </head>
 <body>
     <h1>Selamat Datang</h1>
-    <p>Pilih menu di bawah ini:</p>
-    
-    <button onclick="kirimKeN8N('produksi_gambar')">Produksi Gambar</button>
-    <button onclick="kirimKeN8N('riset_tren')">Riset Tren</button>
+    <p>Pilih menu untuk melihat aturan:</p>
+
+    <button class="rule-btn" onclick="showModal('riset')">🔍 Riset Tren</button>
+    <button class="rule-btn" onclick="showModal('gambar')">🎨 Buat Gambar</button>
+
+    <input type="text" id="userInput" placeholder="Ketik perintah di sini...">
+    <button class="submit-btn" onclick="kirimKeN8N()">Kirim</button>
+
+    <div id="myModal" class="modal" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h3 id="modalTitle"></h3>
+            <p id="modalBody"></p>
+        </div>
+    </div>
 
     <script>
-    const tg = window.Telegram.WebApp;
-    tg.ready();
+        const tg = window.Telegram.WebApp;
+        tg.ready();
 
-    function kirimKeN8N(aksi) {
-        const webhookUrl = 'https://carin-voiceless-cully.ngrok-free.dev/webhook-test/trigger-miniapp';
+        const rules = {
+            riset: "Anda bisa menanyakan tren pasar menggunakan kata tanya seperti 'apa', 'bagaimana', atau 'apa saja'.\n\nContoh:\n- 'Apa trend foto bulan agustus di amerika?'\n- 'Bagaimana tren aset visual untuk tema ramah lingkungan saat ini?'\n- 'Apa saja konsep foto yang sedang laku di Adobe Stock?'",
+            gambar: "Jika Anda ingin memproduksi aset gambar secara otomatis, Anda WAJIB menyertakan frasa 'buat foto' atau 'buatkan' di awal pesan diikuti dengan objek yang diinginkan.\n\nContoh:\n- 'buat foto kucing lucu gaya 3d clay'\n- 'buat foto pemandangan alam estetik watercolor'\n- 'buatkan foto jamtangan'"
+        };
 
-        fetch(webhookUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                user: tg.initDataUnsafe.user.first_name,
-                action: aksi 
+        function showModal(type) {
+            document.getElementById('modalTitle').innerText = type.toUpperCase() + " RULES";
+            document.getElementById('modalBody').innerText = rules[type];
+            document.getElementById('myModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('myModal').style.display = 'none';
+        }
+
+        function kirimKeN8N() {
+            const teks = document.getElementById('userInput').value;
+            const mode = teks.toLowerCase().includes('buat') ? 'generate' : 'riset';
+            
+            fetch('https://carin-voiceless-cully.ngrok-free.dev/webhook/trigger-miniapp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pesan: teks, mode: mode })
             })
-        })
-        .then(response => {
-            alert('Perintah ' + aksi + ' berhasil dikirim!');
-            tg.close();
-        })
-        .catch(error => {
-            alert('Gagal: ' + error);
-        });
-    }
+            .then(() => {
+                alert('Berhasil dikirim!');
+                tg.close();
+            });
+        }
     </script>
 </body>
 </html>
