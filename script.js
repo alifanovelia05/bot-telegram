@@ -39,7 +39,7 @@ function kirimKeN8N() {
     btn.innerText = "Mengirim...";
     btn.disabled = true;
 
-    fetch('https://carin-voiceless-cully.ngrok-free.dev/webhook/trigger-miniapp', {
+    fetch('https://carin-voiceless-cully.ngrok-free.dev/webhook-test/trigger-miniapp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pesan: teks, mode: mode })
