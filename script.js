@@ -32,16 +32,22 @@ function kirimKeN8N() {
     document.getElementById('hasilArea').innerText = "Sedang menganalisis...";
 
     fetch('https://carin-voiceless-cully.ngrok-free.dev/webhook-test/trigger-miniapp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pesan: teks, mode: mode, chat_id: chat_id })
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ pesan: teks, mode: mode, chat_id: chat_id })
     })
-    .then(response => response.json()) 
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Respons jaringan bermasalah');
+        }
+        return response.json();
+    }) 
     .then(data => {
         
         document.getElementById('hasilArea').innerText = data.hasil; 
     })
     .catch(error => {
-        document.getElementById('hasilArea').innerText = "Error: " + error;
+        document.getElementById('hasilArea').innerText = "Gagal memuat data: " + error.message;
+        console.error(error);
     });
 }
