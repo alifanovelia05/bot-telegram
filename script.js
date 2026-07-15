@@ -40,6 +40,6 @@ function kirimKeN8N() {
         })
     }).then(() => {
         alert('Terkirim!');
-        tg.close();
+        
     });
 }
