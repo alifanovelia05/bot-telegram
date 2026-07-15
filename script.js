@@ -27,8 +27,9 @@ function closeModal() {
 function kirimKeN8N() {
     const teks = document.getElementById('userInput').value;
     const mode = teks.toLowerCase().includes('buat') ? 'generate' : 'riset';
-    
     const chat_id = tg.initDataUnsafe?.user?.id;
+
+    document.getElementById('hasilArea').innerText = "Sedang menganalisis, mohon tunggu...";
 
     fetch('https://carin-voiceless-cully.ngrok-free.dev/webhook-test/trigger-miniapp', {
         method: 'POST',
@@ -38,8 +39,14 @@ function kirimKeN8N() {
             mode: mode, 
             chat_id: chat_id 
         })
-    }).then(() => {
-        alert('Terkirim!');
+    })
+    .then(response => response.json()) 
+    .then(data => {
         
+        document.getElementById('hasilArea').innerText = data.hasil; 
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('hasilArea').innerText = "Terjadi kesalahan, silakan coba lagi.";
     });
 }
