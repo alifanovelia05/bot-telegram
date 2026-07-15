@@ -25,15 +25,39 @@ function closeModal() {
 }
 
 function kirimKeN8N() {
-    const teks = document.getElementById('userInput').value;
+    const userInput = document.getElementById('userInput');
+    const teks = userInput ? userInput.value : '';
+
+    if (!teks) {
+        alert("Input kosong, silakan isi dulu!");
+        return;
+    }
+
     const mode = teks.toLowerCase().includes('buat') ? 'generate' : 'riset';
-    
+
+    const btn = document.querySelector('.submit-btn');
+    btn.innerText = "Mengirim...";
+    btn.disabled = true;
+
     fetch('https://carin-voiceless-cully.ngrok-free.dev/webhook/trigger-miniapp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pesan: teks, mode: mode })
-    }).then(() => {
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+    })
+    .then(() => {
         alert('Terkirim!');
-        if (tg) tg.close();
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.close();
+        }
+    })
+    .catch(error => {
+        console.error('Error detail:', error);
+        alert('Gagal: ' + error.message);
+        btn.innerText = "Kirim";
+        btn.disabled = false;
     });
 }
