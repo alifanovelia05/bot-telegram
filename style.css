@@ -61,13 +61,44 @@ input {
     position: relative;
     color: #333;
     white-space: pre-line;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+#modalTitle {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #000;
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+#modalTitle::after {
+    content: "";
+    display: block;
+    width: 50px;
+    height: 3px;
+    background: #333;
+    margin: 10px auto 0;
+    border-radius: 2px;
+}
+
+#modalBody {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #555;
+    margin-top: 20px;
 }
 
 .close-btn {
     position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 24px;
+    top: 15px;
+    right: 20px;
+    font-size: 20px;
     cursor: pointer;
-    color: #888;
+    color: #aaa;
+    transition: color 0.3s;
+}
+
+.close-btn:hover {
+    color: #333;
 }
