@@ -1,5 +1,7 @@
-const tg = window.Telegram.WebApp;
-tg.ready();
+const tg = window.Telegram ? window.Telegram.WebApp : null;
+if (tg) {
+    tg.ready();
+}
 
 const rules = {
     riset: {
@@ -32,6 +34,6 @@ function kirimKeN8N() {
         body: JSON.stringify({ pesan: teks, mode: mode })
     }).then(() => {
         alert('Terkirim!');
-        tg.close();
+        if (tg) tg.close();
     });
 }
