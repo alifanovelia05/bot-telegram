@@ -29,25 +29,56 @@ function kirimKeN8N() {
     const mode = teks.toLowerCase().includes('buat') ? 'generate' : 'riset';
     const chat_id = tg.initDataUnsafe?.user?.id;
 
-    document.getElementById('hasilArea').innerText = "Sedang menganalisis...";
+    document.getElementById('cardContainer').innerHTML = "<div style='text-align:center; padding:15px; background:#fff; border-radius:12px; border:1px solid #ccc;'>Sedang menganalisis...</div>";
 
-    fetch('https://carin-voiceless-cully.ngrok-free.dev/webhook-test/trigger-miniapp', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ pesan: teks, mode: mode, chat_id: chat_id })
+    fetch('https://ngrok-free.dev', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pesan: teks, mode: mode, chat_id: chat_id })
     })
     .then(response => {
-        if (!response.ok) {
-            throw new Error('Respons jaringan bermasalah');
-        }
+        if (!response.ok) throw new Error('Jaringan bermasalah');
         return response.json();
     }) 
     .then(data => {
+        const container = document.getElementById('cardContainer');
+        container.innerHTML = "";
+
+        const teksLengkap = data.hasil;
+        const barisPertama = teksLengkap.split('\n')[0] || "Hasil Riset Baru";
+        const judulRingkas = barisPertama.replace(/Tema\/Trend:|Title:/gi, '').trim();
+
+        const card = document.createElement('div');
+        card.className = "rule-btn";
+        card.style.display = "flex";
+        card.style.justifyContent = "space-between";
+        card.style.alignItems = "center";
         
-        document.getElementById('hasilArea').innerText = data.hasil; 
+        card.innerHTML = `
+            <div style="flex-grow: 1; padding-right: 10px;">
+                <div style="font-size: 11px; color: #888; font-weight: bold; margin-bottom: 4px;">📊 HASIL RISET</div>
+                <div style="font-size: 15px; font-weight: 600; color: #333;">${judulRingkas}</div>
+            </div>
+            <div style="color: #333; font-weight: bold;">➔</div>
+        `;
+
+        card.onclick = function() {
+            openDetailModal(judulRingkas, teksLengkap);
+        };
+
+        container.appendChild(card);
     })
     .catch(error => {
-        document.getElementById('hasilArea').innerText = "Gagal memuat data: " + error.message;
-        console.error(error);
+        document.getElementById('cardContainer').innerHTML = "<div style='text-align:center; padding:15px; color:red;'>Error: " + error.message + "</div>";
     });
+}
+
+function openDetailModal(title, content) {
+    document.getElementById('detailTitle').innerText = title;
+    document.getElementById('detailContent').innerText = content;
+    document.getElementById('detailModal').style.display = 'block';
+}
+
+function closeDetailModal() {
+    document.getElementById('detailModal').style.display = 'none';
 }
