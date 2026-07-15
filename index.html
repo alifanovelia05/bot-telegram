@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Otomasi Aset</title>
+    
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; text-align: center; }
+        button { padding: 15px 25px; margin: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Selamat Datang</h1>
+    <p>Pilih menu di bawah ini:</p>
+    
+    <button onclick="alert('Menu Produksi Gambar')">Produksi Gambar</button>
+    <button onclick="alert('Menu Riset Tren')">Riset Tren</button>
+
+    <script>
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+
+    function kirimKeN8N(aksi) {
+        const webhookUrl = 'https://carin-voiceless-cully.ngrok-free.dev/webhook-test/trigger-miniapp';
+
+        fetch(webhookUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                user: tg.initDataUnsafe.user.first_name,
+                action: aksi 
+            })
+        })
+        .then(response => {
+            alert('Perintah ' + aksi + ' berhasil dikirim!');
+            tg.close();
+        })
+        .catch(error => {
+            alert('Gagal: ' + error);
+        });
+    }
+    </script>
+</body>
+</html>
