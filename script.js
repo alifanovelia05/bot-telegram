@@ -31,7 +31,7 @@ function kirimKeN8N() {
 
     document.getElementById('cardContainer').innerHTML = "<div style='text-align:center; padding:15px; background:#fff; border-radius:12px; border:1px solid #ccc;'>Sedang menganalisis...</div>";
 
-    fetch('https://ngrok-free.dev', {
+    fetch('https://carin-voiceless-cully.ngrok-free.dev/webhook-test/trigger-miniapp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pesan: teks, mode: mode, chat_id: chat_id })
